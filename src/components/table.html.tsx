@@ -3,10 +3,12 @@ import "./table.style.css";
 
 const TableHtml = ({
   list,
-  handleSearch
+  handleSearch,
+  handleCheckBoxChange
 }: {
   list: any[];
   handleSearch: (e: any) => void;
+  handleCheckBoxChange: (e: any) => void;
 }) => {
   console.log(list);
 
@@ -27,6 +29,7 @@ const TableHtml = ({
               id="header"
               name="header"
               value="All"
+              onChange={handleCheckBoxChange}
             ></input>
           </th>
           <th>Name</th>
@@ -40,8 +43,9 @@ const TableHtml = ({
               <input
                 type="checkbox"
                 id={item.email}
-                name={item.email}
+                name="body"
                 value={item.email}
+                onChange={handleCheckBoxChange}
               ></input>
             </td>
             <td>{item.name}</td>

@@ -1,11 +1,13 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { isTemplateTail } from "typescript";
 import TableHtml from "./table.html";
 
 export const TableLogic = () => {
   const [list, setList] = useState<any[]>([]);
   const [listToRender, setListToRender] = useState<any[]>([]);
   const [globalSearchList, setGlobalSearchList] = useState<any[]>([]);
+  const [selectedItems, setSelectedItems] = useState<any[]>([]);
   const [globalSearchText, setGlobalSearchText] = useState<string>("");
   const getData = async () => {
     let resp = (
@@ -31,9 +33,9 @@ export const TableLogic = () => {
     // console.log(e.target.value);
     let result = list.filter(
       it =>
-        it.role.includes(text) ||
-        it.name.includes(text) ||
-        it.email.includes(text)
+        it.role.toLowerCase().includes(text.toLowerCase()) ||
+        it.name.toLowerCase().includes(text.toLowerCase()) ||
+        it.email.toLowerCase().includes(text.toLowerCase())
     );
     console.log(result);
     setGlobalSearchList(result);
@@ -41,5 +43,35 @@ export const TableLogic = () => {
     else setListToRender(result);
   };
 
-  return <TableHtml list={listToRender} handleSearch={handleSearch} />;
+  const handleCheckBoxChange = (e: any) => {
+    let temp: React.SetStateAction<any[]> = [];
+    if (e.target.value === "All") {
+      let checkboxes = document.getElementsByName("body") as unknown as
+        | HTMLInputElement[]
+        | [];
+      for (let i = 0; i < checkboxes?.length; i++) {
+        checkboxes[i].checked = e.target.checked;
+        if (e.target.checked) temp.push(checkboxes[i].value);
+      }
+      setSelectedItems(temp);
+    } else {
+      temp = [...selectedItems];
+      if (e.target.checked) {
+        temp.push(e.target.value);
+        setSelectedItems(temp);
+      } else {
+        temp = temp.filter(it => it !== e.target.value);
+        setSelectedItems(temp);
+      }
+    }
+    console.log(temp);
+  };
+
+  return (
+    <TableHtml
+      list={listToRender}
+      handleSearch={handleSearch}
+      handleCheckBoxChange={handleCheckBoxChange}
+    />
+  );
 };
